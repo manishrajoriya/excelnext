@@ -4,10 +4,14 @@ import * as xlsx from 'xlsx';
 
 const prisma = new PrismaClient();
 
+interface Item {
+  name: string;
+}
+
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-    const file = formData.get('file') as File;
+    const file = formData.get('file') as File | null;
 
     if (!file) {
       return NextResponse.json({ message: 'No file provided' }, { status: 400 });
@@ -18,17 +22,17 @@ export async function POST(request: Request) {
     const workbook = xlsx.read(buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];
-    const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
+    const data = xlsx.utils.sheet_to_json<string[]>(sheet, { header: 1 });
 
     // Extract device names from the first column
-    const uploadedDevices = data.slice(1).map((row: any) => row[0]);
+    const uploadedDevices = data.slice(1).map((row) => row[0]);
 
     // Fetch devices from the database
     const dbDevices = await prisma.item.findMany();
 
     // Create a map to track the count of each device in the database
     const dbDeviceCountMap = new Map<string, number>();
-    dbDevices.forEach((device) => {
+    dbDevices.forEach((device: Item) => {
       dbDeviceCountMap.set(device.name, (dbDeviceCountMap.get(device.name) || 0) + 1);
     });
 
@@ -40,14 +44,19 @@ export async function POST(request: Request) {
     const remainingDbCountMap = new Map(dbDeviceCountMap);
 
     uploadedDevices.forEach((device) => {
-      if (remainingDbCountMap.has(device) && remainingDbCountMap.get(device)! > 0) {
-        commonData.push(device);
-        remainingDbCountMap.set(device, remainingDbCountMap.get(device)! - 1);
+      if (remainingDbCountMap.has(device)) {
+        const count = remainingDbCountMap.get(device)!;
+        if (count > 0) {
+          commonData.push(device);
+          remainingDbCountMap.set(device, count - 1);
+        } else {
+          unmatchedData.push(device);
+        }
       } else {
         unmatchedData.push(device);
       }
     });
-
+   
     // Create a new Excel file with common and unmatched data
     const newWorkbook = xlsx.utils.book_new();
 

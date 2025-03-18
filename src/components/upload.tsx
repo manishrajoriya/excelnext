@@ -1,14 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
+
+type Device = {
+  id: number;
+  name: string;
+};
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [devices, setDevices] = useState<{ id: number; name: string }[]>([]);
+  const [devices, setDevices] = useState<Device[]>([]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       if (selectedFile.name.endsWith('.xlsx') || selectedFile.name.endsWith('.xls')) {

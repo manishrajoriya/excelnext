@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 
 export default function MatchPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -10,7 +10,7 @@ export default function MatchPage() {
   const [unmatchedData, setUnmatchedData] = useState<string[]>([]);
   const [fileData, setFileData] = useState<string>('');
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       if (selectedFile.name.endsWith('.xlsx') || selectedFile.name.endsWith('.xls')) {
