@@ -17,7 +17,7 @@ export async function GET(request: Request) {
       },
     });
     return NextResponse.json(devices, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
       { message: 'Error fetching devices' },
       { status: 500 }

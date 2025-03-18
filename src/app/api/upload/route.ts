@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       { message: 'File uploaded and data inserted successfully' },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
       { message: 'Error uploading file. Please check the file format and try again.' },
       { status: 500 }
