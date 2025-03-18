@@ -93,7 +93,6 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error(error);
     return NextResponse.json(
       { message: 'Error processing file' },
       { status: 500 }
