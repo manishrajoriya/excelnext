@@ -43,8 +43,7 @@ export async function POST(request: Request) {
       { message: 'Devices deleted successfully' },
       { status: 200 }
     );
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
     return NextResponse.json(
       { message: 'Error deleting devices' },
       { status: 500 }
