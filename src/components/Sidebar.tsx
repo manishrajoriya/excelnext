@@ -56,6 +56,11 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
               Display
             </Link>
           </li>
+          <li>
+            <Link href="/pdftoexcle" className="block px-4 py-2 hover:bg-gray-700">
+              PDF to Excel
+            </Link>
+          </li>
         </ul>
       </nav>
     </div>
